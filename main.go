@@ -2,12 +2,15 @@ package main
 
 import "fmt"
 
+func add(a *int, b *int) int {
+	return *a + *b
+}
 func main() {
-	defer fmt.Println("world")
+	var a = 5
+	var b = 10
 
-	fmt.Print("hello ")
+	var sum = add(&a, &b)
 
-	for i := range 10 {
-		defer fmt.Println(i)
-	}
+	fmt.Println(sum)
+
 }
