@@ -6,8 +6,10 @@ import (
 
 func main() {
 	var sum int = 0
-	for i := 0; i < 10; i++ {
+	var i = 0
+	for i < 10 {
 		sum += i
+		i++
 	}
 	fmt.Println(sum)
 }
