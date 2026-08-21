@@ -2,25 +2,32 @@ package main
 
 import (
 	"fmt"
+	"math"
 
-	"github.com/abhinaaaavvv/ilovego/public"
+	"ilovego/public"
 )
 
 func add(a int, b int) (int, int) {
 	return a + b, a * b
 }
 
+var (
+	number = 1234
+	name   = "abhinav"
+)
+
+const (
+	Pi  = math.Pi
+	age = 16
+)
+
 func main() {
-	a := 5
-	b := 10
+	var a = 5
+	var b = 10
 
-	sum1 := public.Add(a, b)
-	product1 := public.Multi(a, b)
-
-	sum, product := add(a, b)
+	var sum = public.Add(a, b)
+	var product = public.Multi(a, b)
 
 	fmt.Println("the sum of a and b is", sum)
-	fmt.Println("the sum of a and b is", sum1)
 	fmt.Println("the product of a and b is", product)
-	fmt.Println("the product of a and b is", product1)
 }

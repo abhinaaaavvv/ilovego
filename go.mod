@@ -1,3 +1,3 @@
-module github.com/abhinaaaavvv/ilovego
+module ilovego
 
 go 1.27.0
