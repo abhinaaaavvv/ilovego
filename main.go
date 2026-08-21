@@ -14,7 +14,7 @@ func main() {
 	a := 5
 	b := 10
 
-	sum1 := public.Adder(a, b)
+	sum1 := public.Add(a, b)
 	product1 := public.Multi(a, b)
 
 	sum, product := add(a, b)
