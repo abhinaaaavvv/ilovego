@@ -1,34 +1,26 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
+
+type Vertex struct {
+	X int
+	Y int
+}
+ok so this is nice but nor for me
 
 func main() {
-	arr := [10]int{1, 0, 2, 9, 3, 8, 4, 7, 5, 6}
+	var a int = 15
 
-	sorted := sort(arr[:])
+	var p = &a
 
-	fmt.Println(sorted)
-}
-
-func sort(arr []int) []int {
-	n := len(arr)
-	if n <= 1 {
-		return arr
+	var point = Vertex{
+		X: 12,
+		Y: 34,
 	}
 
-	for i := 0; i < n-1; i++ {
-		swapped := false
-		for j := 0; j < n-1-i; j++ {
-			if arr[j] > arr[j+1] {
-				arr[j], arr[j+1] = arr[j+1], arr[j]
-				swapped = true
-			}
-		}
-		if !swapped {
-			break
-		}
-	}
-	return arr
+	var pn = &Vertex{2, 4}
+
+	fmt.Println(point.Y)
+	fmt.Println(p)
+	fmt.Println(pn)
 }
