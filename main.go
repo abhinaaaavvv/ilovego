@@ -21,8 +21,9 @@ func isAmstrong(n int) bool {
 }
 
 func main() {
-	fmt.Println("Armstrong numbers between 1 and 100000000 are:")
-	for i := 1; i <= 100000000; i++ {
+	var n int = 1000000
+	fmt.Printf("Armstrong numbers between 1 and %v are:\n", n)
+	for i := 1; i <= n; i++ {
 		if isAmstrong(i) {
 			fmt.Println(i)
 		}
