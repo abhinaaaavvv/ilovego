@@ -1,13 +1,33 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
+
+type Coord struct {
+	lat, long float64
+}
 
 func main() {
-	slice_1 := []int{1, 2, 3, 4, 5}
-	slice_2 := []int{6, 7, 8, 9, 0}
+	m := map[string]int{}
+	n := make(map[string]int)
 
-	slice_1 = append(slice_1, slice_2...)
-	fmt.Println(slice_1)
+	m["Answer"] = 42
+	n["Answer"] = 50
+
+	a := map[string]int{
+		"Rollno.": 19,
+	}
+
+	b := map[string]Coord{
+		"bangalore": {
+			12.9716, 77.5946,
+		},
+		"hyderabad": {
+			17.3850, 78.4867,
+		},
+	}
+
+	fmt.Println(a["Rollno."])
+	fmt.Println(b["bangalore"])
+	fmt.Println(b["hyderabad"])
+
 }
