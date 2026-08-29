@@ -6,7 +6,6 @@ type Vertex struct {
 	X int
 	Y int
 }
-ok so this is nice but nor for me
 
 func main() {
 	var a int = 15
