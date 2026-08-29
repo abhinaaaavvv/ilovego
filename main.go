@@ -35,4 +35,8 @@ func main() {
 	v := q[:]
 	fmt.Println(v)
 
+	a := make([]int, 5)
+	b := make([]int, 5, 10)
+	fmt.Println(a, b)
+
 }
