@@ -1,25 +1,38 @@
 package main
 
-import "fmt"
-
-type Vertex struct {
-	X int
-	Y int
-}
+import (
+	"fmt"
+)
 
 func main() {
-	var a int = 15
+	arr := [5]int{1, 2, 3, 4, 5}
+	slice := arr[1:3]
+	fmt.Println(arr)
+	fmt.Println(slice)
 
-	var p = &a
+	q := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	fmt.Println(q)
 
-	var point = Vertex{
-		X: 12,
-		Y: 34,
+	r := []bool{true, false, false, true, false, true, true}
+	fmt.Println(r)
+
+	s := []struct {
+		i int
+		b bool
+	}{
+		{1, true},
+		{2, false},
+		{q[2], r[2]},
 	}
+	fmt.Println(s)
 
-	var pn = &Vertex{2, 4}
+	t := q[3:]
+	fmt.Println(t)
 
-	fmt.Println(point.Y)
-	fmt.Println(p)
-	fmt.Println(pn)
+	u := q[:3]
+	fmt.Println(u)
+
+	v := q[:]
+	fmt.Println(v)
+
 }
