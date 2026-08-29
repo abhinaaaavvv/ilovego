@@ -1,31 +1,18 @@
 package main
 
-import (
-	"fmt"
-	"math"
-)
+import "fmt"
 
-func isAmstrong(n int) bool {
-	originalNumber := n
-	sum := 0
+type Vertex struct {
+	X, Y int
+}
 
-	numberOfDigits := len(fmt.Sprintf("%d", n))
-
-	for n > 0 {
-		digit := n % 10
-		sum += int(math.Pow(float64(digit), float64(numberOfDigits)))
-		n /= 10
-	}
-
-	return sum == originalNumber
+func (v Vertex) add() int {
+	return v.X + v.Y
 }
 
 func main() {
-	var n int = 1000000
-	fmt.Printf("Armstrong numbers between 1 and %v are:\n", n)
-	for i := 1; i <= n; i++ {
-		if isAmstrong(i) {
-			fmt.Println(i)
-		}
+	v := Vertex{
+		5, 6,
 	}
+	fmt.Println(v.add())
 }
