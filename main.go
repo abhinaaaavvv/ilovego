@@ -1,33 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
-type Coord struct {
-	lat, long float64
+func isAmstrong(n int) bool {
+	originalNumber := n
+	sum := 0
+
+	numberOfDigits := len(fmt.Sprintf("%d", n))
+
+	for n > 0 {
+		digit := n % 10
+		sum += int(math.Pow(float64(digit), float64(numberOfDigits)))
+		n /= 10
+	}
+
+	return sum == originalNumber
 }
 
 func main() {
-	m := map[string]int{}
-	n := make(map[string]int)
-
-	m["Answer"] = 42
-	n["Answer"] = 50
-
-	a := map[string]int{
-		"Rollno.": 19,
+	fmt.Println("Armstrong numbers between 1 and 100000000 are:")
+	for i := 1; i <= 100000000; i++ {
+		if isAmstrong(i) {
+			fmt.Println(i)
+		}
 	}
-
-	b := map[string]Coord{
-		"bangalore": {
-			12.9716, 77.5946,
-		},
-		"hyderabad": {
-			17.3850, 78.4867,
-		},
-	}
-
-	fmt.Println(a["Rollno."])
-	fmt.Println(b["bangalore"])
-	fmt.Println(b["hyderabad"])
-
 }
