@@ -1,53 +1,37 @@
 package main
 
-import (
-	"fmt"
-	"math"
-)
+import "fmt"
 
-type Shape interface {
-	area() float64
-	perimeter() float64
+type numbers interface {
+	int | float64 | uint
 }
 
-type Circle struct {
-	radius float64
+func Index[T comparable](s []T, x T) int {
+	for i, v := range s {
+		if v == x {
+			return i
+		}
+	}
+	return -1
 }
 
-func (c Circle) area() float64 {
-	return math.Pi * math.Pow(c.radius, 2)
-}
+func Add[N numbers](a ...N) N { //variadic function (a ...N)
+	var sum N = 0
 
-func (c Circle) perimeter() float64 {
-	return 2 * math.Pi * c.radius
-}
-
-type Square struct {
-	height, width float64
-}
-
-func (s Square) area() float64 {
-	return s.height * s.width
-}
-
-func (s Square) perimeter() float64 {
-	return (2 * s.height) + (2 * s.width)
-}
-
-func Area(s Shape) float64 {
-	return s.area()
-}
-
-func Perimeter(s Shape) float64 {
-	return s.perimeter()
+	for _, v := range a {
+		sum += v
+	}
+	return sum
 }
 
 func main() {
-	a := Circle{5}
-	fmt.Println(Area(a))
-	fmt.Println(Perimeter(a))
+	s1 := []int{1, 2, 3, 4, 5}
+	fmt.Println(Index(s1, 5))
 
-	b := Square{5, 10}
-	fmt.Println(Area(b))
-	fmt.Println(Perimeter(b))
+	s2 := []string{"abhinav", "moni", "bhavani"}
+	fmt.Println(Index(s2, "hello"))
+
+	fmt.Println(Add(5, 6))
+	fmt.Println(Add(5.5, 6.7, 9.2))
+	fmt.Println(Add(-5, 6, 14))
 }
