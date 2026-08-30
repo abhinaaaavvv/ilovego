@@ -1,31 +1,53 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
-type Vertex struct {
-	X, Y float64
+type Shape interface {
+	area() float64
+	perimeter() float64
 }
 
-func (v *Vertex) scale(f float64) {
-	v.X = v.X * f
-	v.Y = v.Y * f
+type Circle struct {
+	radius float64
 }
 
-func scaleFunc(v *Vertex, f float64) {
+func (c Circle) area() float64 {
+	return math.Pi * math.Pow(c.radius, 2)
+}
 
-	v.X = v.X * f
-	v.Y = v.Y * f
+func (c Circle) perimeter() float64 {
+	return 2 * math.Pi * c.radius
+}
+
+type Square struct {
+	height, width float64
+}
+
+func (s Square) area() float64 {
+	return s.height * s.width
+}
+
+func (s Square) perimeter() float64 {
+	return (2 * s.height) + (2 * s.width)
+}
+
+func Area(s Shape) float64 {
+	return s.area()
+}
+
+func Perimeter(s Shape) float64 {
+	return s.perimeter()
 }
 
 func main() {
-	v := Vertex{5, 6}
-	v.scale(5)
-	scaleFunc(&v, 10)
+	a := Circle{5}
+	fmt.Println(Area(a))
+	fmt.Println(Perimeter(a))
 
-	p := &Vertex{7, 8}
-	p.scale(5)
-	scaleFunc(p, 10)
-
-	fmt.Println(v, p)
-
+	b := Square{5, 10}
+	fmt.Println(Area(b))
+	fmt.Println(Perimeter(b))
 }
