@@ -6,96 +6,79 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Note struct {
-	Id      int    `json:"id"`
+	ID      int    `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
 
 var (
 	notes  = map[int]Note{}
-	nextId = 1
+	nextID = 1
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", homeHandler)
-	mux.HandleFunc("/notes", notesHandler)
-	mux.HandleFunc("/notes/", getNote)
+	r := chi.NewRouter()
 
-	server := http.Server{
+	r.Route("/notes", func(r chi.Router) {
+		r.Get("/", listNotes)
+		r.Post("/", createNote)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", getNote)
+			r.Put("/", updateNote)
+			r.Patch("/", patchNote)
+			r.Delete("/", deleteNote)
+		})
+	})
+
+	server := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: r,
 	}
 
-	fmt.Println("Server starting on http://localhost:8080")
+	fmt.Println("Server starting on :8080")
 	log.Fatal(server.ListenAndServe())
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Welcome to notes api!\n")
-}
-
 func listNotes(w http.ResponseWriter, r *http.Request) {
-	allnotes := make([]Note, 0, len(notes))
+	allNotes := make([]Note, 0, len(notes))
 	for _, note := range notes {
-		allnotes = append(allnotes, note)
+		allNotes = append(allNotes, note)
 	}
-	w.Header().Set("Content-type", "application/json")
-	json.NewEncoder(w).Encode(allnotes)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(allNotes)
 }
 
 func createNote(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var note Note
-	err := json.NewDecoder(r.Body).Decode(&note)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
-	note.Id = nextId
-	nextId++
 
-	notes[note.Id] = note
+	note.ID = nextID
+	nextID++
+	notes[note.ID] = note
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(note)
 }
 
-func notesHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		listNotes(w, r)
-	case http.MethodPost:
-		createNote(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
-
 func getNote(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/notes/")
-	if path == "" || path == r.URL.Path {
-		http.Error(w, "Invalid note ID", http.StatusBadRequest)
-		return
-	}
-
-	id, err := strconv.Atoi(path)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, "Invalid note ID", http.StatusBadRequest)
 		return
 	}
 
-	note, exist := notes[id]
-	if !exist {
+	note, exists := notes[id]
+	if !exists {
 		http.Error(w, "Note not found", http.StatusNotFound)
 		return
 	}
@@ -105,8 +88,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateNote(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/notes/")
-	id, err := strconv.Atoi(path)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, "Invalid note ID", http.StatusBadRequest)
 		return
@@ -118,21 +100,20 @@ func updateNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var note Note
-	err = json.NewDecoder(r.Body).Decode(&note)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
 
-	note.Id = id
+	note.ID = id
 	notes[id] = note
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(note)
 }
 
-func patchNotes(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/notes/")
-	id, err := strconv.Atoi(path)
+func patchNote(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, "Invalid note ID", http.StatusBadRequest)
 		return
@@ -145,8 +126,7 @@ func patchNotes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var updates map[string]any
-	err = json.NewDecoder(r.Body).Decode(&updates)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
@@ -165,8 +145,7 @@ func patchNotes(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteNote(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/notes/")
-	id, err := strconv.Atoi(path)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		http.Error(w, "Invalid note ID", http.StatusBadRequest)
 		return
@@ -178,6 +157,5 @@ func deleteNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	delete(notes, id)
-
 	w.WriteHeader(http.StatusNoContent)
 }
