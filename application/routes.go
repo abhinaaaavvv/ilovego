@@ -1,21 +1,32 @@
 package application
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/abhinaaaavvv/ilovego/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 func loadRoutes() *chi.Mux {
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "hello world!\n")
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	return router
+	r.Route("/orders", loadOrderRoutes)
+
+	return r
+}
+
+func loadOrderRoutes(r chi.Router) {
+	orderHandler := &handler.Order{}
+
+	r.Post("/", orderHandler.Create)
+	r.Get("/", orderHandler.List)
+	r.Get("/{id}", orderHandler.GetByID)
+	r.Put("/{id}", orderHandler.UpdateByID)
+	r.Delete("/{id}", orderHandler.DeleteByID)
 }
