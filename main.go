@@ -1,28 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/abhinaaaavvv/ilovego/application"
 )
 
 func main() {
-	router := chi.NewRouter()
-	router.Use(middleware.Logger)
-	router.Get("/hello", helloWorld)
+	app := application.New()
 
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
+	if err := app.Start(context.TODO()); err != nil {
+		fmt.Println("Failed to start app:", err)
 	}
-
-	fmt.Println("server serving at http://localhost:8080")
-	log.Fatal(server.ListenAndServe())
-}
-
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello world")
 }
