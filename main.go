@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/abhinaaaavvv/ilovego/application"
 )
@@ -10,7 +12,10 @@ import (
 func main() {
 	app := application.New()
 
-	if err := app.Start(context.TODO()); err != nil {
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	if err := app.Start(ctx); err != nil {
 		fmt.Println("Failed to start app:", err)
 	}
 }
