@@ -4,25 +4,30 @@ import (
 	"net/http"
 
 	"github.com/abhinaaaavvv/ilovego/handler"
+	"github.com/abhinaaaavvv/ilovego/repository/order"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func loadRoutes() *chi.Mux {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+func (a *App) loadRoutes() {
+	router := chi.NewRouter()
+	router.Use(middleware.Logger)
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	r.Route("/orders", loadOrderRoutes)
+	router.Route("/orders", a.loadOrderRoutes)
 
-	return r
+	a.router = router
 }
 
-func loadOrderRoutes(r chi.Router) {
-	orderHandler := &handler.Order{}
+func (a *App) loadOrderRoutes(r chi.Router) {
+	orderHandler := &handler.Order{
+		Repo: &order.RedisRepo{
+			Client: a.rdb,
+		},
+	}
 
 	r.Post("/", orderHandler.Create)
 	r.Get("/", orderHandler.List)
