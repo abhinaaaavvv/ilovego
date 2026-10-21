@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand/v2"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/abhinaaaavvv/ilovego/model"
 	"github.com/abhinaaaavvv/ilovego/repository/order"
+	"github.com/go-chi/chi/v5"
 )
 
 type Order struct {
@@ -81,8 +83,8 @@ func (h *Order) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response struct {
-		Items []model.Order `json: "items"`
-		Next  uint64        `json: "next,omitempty"`
+		Items []model.Order `json:"items"`
+		Next  uint64        `json:"next,omitempty"`
 	}
 
 	response.Items = res.Orders
@@ -98,13 +100,121 @@ func (h *Order) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Order) GetByID(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Get an order by ID")
+	idParam := chi.URLParam(r, "id")
+
+	const base = 10
+	const bitzise = 64
+
+	orderID, err := strconv.ParseUint(idParam, base, bitzise)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	o, err := h.Repo.FindByID(r.Context(), orderID)
+	if errors.Is(err, order.ErrorNotExist) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
+		fmt.Println("Failed to find by id:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(o); err != nil {
+		fmt.Println("Failed to marshal:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Order) UpdateByID(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Update an order by ID")
+	var body struct {
+		Status string `json:"status"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	idParam := chi.URLParam(r, "id")
+
+	const base = 10
+	const bitzise = 64
+
+	orderID, err := strconv.ParseUint(idParam, base, bitzise)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	theOrder, err := h.Repo.FindByID(r.Context(), orderID)
+	if errors.Is(err, order.ErrorNotExist) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
+		fmt.Println("Failed to find by id:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	const completedSatus = "completed"
+	const shippedStatus = "shipped"
+	now := time.Now().UTC()
+
+	switch body.Status {
+	case shippedStatus:
+		if theOrder.ShippedAt != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		theOrder.ShippedAt = &now
+	case completedSatus:
+		if theOrder.CompletedAt != nil || theOrder.ShippedAt == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		theOrder.CompletedAt = &now
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = h.Repo.Update(r.Context(), theOrder)
+	if err != nil {
+		fmt.Println("Failed to insert:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(theOrder); err != nil {
+		fmt.Println("Failed to marshal:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Order) DeleteByID(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Delete an order by ID")
+	idParam := chi.URLParam(r, "id")
+
+	const base = 10
+	const bitzise = 64
+
+	orderID, err := strconv.ParseUint(idParam, base, bitzise)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = h.Repo.DeleteByID(r.Context(), orderID)
+	if errors.Is(err, order.ErrorNotExist) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
+		fmt.Println("Failed to find by id:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 }
