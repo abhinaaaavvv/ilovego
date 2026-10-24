@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/abhinaaaavvv/ilovego/application"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/application"
 )
 
 func main() {

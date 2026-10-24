@@ -10,8 +10,8 @@ import (
 	"time"
 	"uuid"
 
-	"github.com/abhinaaaavvv/ilovego/model"
-	"github.com/abhinaaaavvv/ilovego/repository/order"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/model"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/repository/order"
 	"github.com/go-chi/chi/v5"
 )
 

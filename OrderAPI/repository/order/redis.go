@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/abhinaaaavvv/ilovego/model"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/model"
 	"github.com/redis/go-redis/v9"
 )
 

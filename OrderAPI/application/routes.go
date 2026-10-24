@@ -3,8 +3,8 @@ package application
 import (
 	"net/http"
 
-	"github.com/abhinaaaavvv/ilovego/handler"
-	"github.com/abhinaaaavvv/ilovego/repository/order"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/handler"
+	"github.com/abhinaaaavvv/ilovego/OrderAPI/repository/order"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

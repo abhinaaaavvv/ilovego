@@ -1,4 +1,4 @@
-module github.com/abhinaaaavvv/ilovego
+module github.com/abhinaaaavvv/ilovego/OrderAPI
 
 go 1.27.0
 
