@@ -26,8 +26,12 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Route("/v1", func(r chi.Router) {
-		r.Get("/health", app.healthCheckHandler)
+	r.Route("/", func(r chi.Router) {
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("hello from Abhi's serverrr!!!")) })
+		r.Route("/v1", func(r chi.Router) {
+			r.Get("/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("version 1?")) })
+			r.Get("/health", app.healthCheckHandler)
+		})
 	})
 
 	return r
