@@ -1,10 +1,20 @@
 package main
 
-import "log"
+import (
+	"abhinaaaavvv/ilovego/Social/internal/env"
+	"fmt"
+	"log"
+
+	"github.com/joho/godotenv"
+)
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	cfg := config{
-		addr: ":8080",
+		addr: fmt.Sprintf(":%s", env.GetString("PORT", "8080")),
 	}
 
 	app := &application{
